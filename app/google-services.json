@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "646081157307",
+    "firebase_url": "https://rando-a16f9.firebaseio.com",
+    "project_id": "rando-a16f9",
+    "storage_bucket": "rando-a16f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:646081157307:android:234b5c5c5077c428",
+        "android_client_info": {
+          "package_name": "com.example.frido.rando"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "646081157307-q9in58tkmcubl68jn64ien26o6c4d030.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.frido.rando",
+            "certificate_hash": "6CD9C558E9A583265231F522D1D3B6806F36A7AF"
+          }
+        },
+        {
+          "client_id": "646081157307-09vvg1d0vifc4bj9irkerqkij1ee2o77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCneTxuj0kgtawP6m8gt9tzzOj7cowP_SQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "646081157307-09vvg1d0vifc4bj9irkerqkij1ee2o77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
