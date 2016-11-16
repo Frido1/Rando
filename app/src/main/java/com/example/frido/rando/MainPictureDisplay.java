@@ -139,7 +139,7 @@ public class MainPictureDisplay extends Activity {
                 .transform(new CroppingTransformation(getApplicationContext()))
                 .into( mContentView);
        mContentView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
-        String test;
+        String isthisWorking;
 
     }
 
