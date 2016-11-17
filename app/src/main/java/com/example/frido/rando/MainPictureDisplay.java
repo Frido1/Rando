@@ -12,9 +12,12 @@ import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -44,7 +47,7 @@ public class MainPictureDisplay extends Activity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private ImageViewTouch mContentView;
+    private SwipeFlingAdapterView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -54,6 +57,7 @@ public class MainPictureDisplay extends Activity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
+
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -97,6 +101,7 @@ public class MainPictureDisplay extends Activity {
     };
     private  String imageURLFatPita = "http://fatpita.net/images/image%20";
     private final int Total_FATPITA_Images = 20240;
+    private ArrayList<String> imagesToLoad = new ArrayList<String>();
 
 
     @Override
@@ -111,17 +116,12 @@ public class MainPictureDisplay extends Activity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = (ImageViewTouch) findViewById(R.id.fullscreen_content);
+        mContentView = (SwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
 
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setSingleTapListener(new ImageViewTouch.OnImageViewTouchSingleTapListener() {
-            @Override
-            public void onSingleTapConfirmed() {
-                toggle();
-            }
-        });
+        //ToDo
 
 
         // Upon interacting with UI controls, delay any scheduled hide()
@@ -131,16 +131,72 @@ public class MainPictureDisplay extends Activity {
 
 
         //load image into main content view
+        imagesToLoad = getImageURLS();
+        //SwipeFlingAdapterView mContentView = (SwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
+        final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
+        mContentView.setAdapter(adapater);
+        mContentView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+                                            @Override
+                                            public void removeFirstObjectInAdapter() {
+                                                // this is the simplest way to delete an object from the Adapter (/AdapterView)
+                                                Log.d("LIST", "removed object!");
+                                                imagesToLoad.remove(0);
+                                                adapater.notifyDataSetChanged();
+                                            }
+
+                                            @Override
+                                            public void onLeftCardExit(Object dataObject) {
+                                                //Do something on the left!
+                                                //You also have access to the original object.
+                                                //If you want to use it just cast it (String) dataObject
+                                                Toast.makeText(MainPictureDisplay.this, "Left!", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            @Override
+                                            public void onRightCardExit(Object dataObject) {
+                                                Toast.makeText(MainPictureDisplay.this, "Right!", Toast.LENGTH_SHORT).show();
+                                            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int i) {
+                imagesToLoad .add(getOneMoreImage());
+               adapater.notifyDataSetChanged();
+                Log.d("LIST", "notified");
+                i++;
+
+            }
+
+            @Override
+            public void onScroll(float v) {
+
+            }
+
+        });
+
+
+       //mContentView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
+
+
+
+    }
+
+    private String getOneMoreImage() {
         Random rand = new Random();
         int fatPitaImage =  rand.nextInt(Total_FATPITA_Images)+1;
         imageURLFatPita = imageURLFatPita+"("+fatPitaImage+").jpg";
-        Glide.with(getApplicationContext())
-                .load(imageURLFatPita)
-                .transform(new CroppingTransformation(getApplicationContext()))
-                .into( mContentView);
-       mContentView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
-        String test5;
+        return imageURLFatPita ;
+    }
 
+    private ArrayList<String> getImageURLS() {
+        Random rand = new Random();
+        ArrayList<String> temp = new ArrayList<String>();
+        String tempURL;
+        for (int i = 0; i < 10 ; i++) {
+            int fatPitaImage =  rand.nextInt(Total_FATPITA_Images)+1;
+            tempURL = imageURLFatPita+"("+fatPitaImage+").jpg";
+            temp.add(tempURL);
+        }
+        return temp;
     }
 
 

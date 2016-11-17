@@ -26,7 +26,8 @@
         android:id="@+id/home_ViewSentPics"
         android:text="@string/home_ViewSentPics"
         android:layout_below="@+id/home_Button_Start"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="testSlider" />
 
     <Button
         android:layout_width="wrap_content"
