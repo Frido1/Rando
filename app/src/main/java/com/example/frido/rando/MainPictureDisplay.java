@@ -47,7 +47,7 @@ public class MainPictureDisplay extends Activity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private SwipeFlingAdapterView mContentView;
+    private TouchZoomSwipeFlingAdapterView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -116,7 +116,7 @@ public class MainPictureDisplay extends Activity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = (SwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
+        mContentView = (TouchZoomSwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
 
 
 
@@ -135,7 +135,8 @@ public class MainPictureDisplay extends Activity {
         //SwipeFlingAdapterView mContentView = (SwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
         mContentView.setAdapter(adapater);
-        mContentView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+
+        mContentView.setFlingListener(new TouchZoomSwipeFlingAdapterView.onFlingListener() {
                                             @Override
                                             public void removeFirstObjectInAdapter() {
                                                 // this is the simplest way to delete an object from the Adapter (/AdapterView)

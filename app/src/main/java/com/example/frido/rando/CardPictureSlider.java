@@ -22,11 +22,11 @@ public class CardPictureSlider extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_picture_slider);
 
-        SwipeFlingAdapterView flingContainer = (SwipeFlingAdapterView) findViewById(R.id.flingswipeTest);
+        TouchZoomSwipeFlingAdapterView flingContainer = (TouchZoomSwipeFlingAdapterView) findViewById(R.id.flingswipeTest);
         imagesToLoad = getImageURLS();
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
         flingContainer.setAdapter(adapater);
-        flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
+        flingContainer.setFlingListener(new TouchZoomSwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
