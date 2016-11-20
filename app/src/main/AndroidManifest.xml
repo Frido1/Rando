@@ -33,7 +33,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.frido.rando.Home" />
         </activity>
-        <activity android:name=".CardPictureSlider" />
         <activity
             android:name=".ImageViewFullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"

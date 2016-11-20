@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.frido.rando.Utilities.saveBitmap;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.lorentzos.flingswipe.Direction;
 
 
 import java.util.ArrayList;
@@ -141,6 +142,8 @@ public class MainPictureDisplay extends Activity {
         imagesToLoad = getImageURLS();
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
         mContentView.setAdapter(adapater);
+
+
         mContentView.setFlingListener
                 (new SwipeFlingAdapterView.onFlingListener() {
                     @Override
@@ -151,22 +154,23 @@ public class MainPictureDisplay extends Activity {
                         adapater.notifyDataSetChanged();
                     }
 
-
-
-
-
                     @Override
-                    public void onLeftCardExit(Object dataObject) {
-                        //Do something on the left!
-                        //You also have access to the original object.
-                        //If you want to use it just cast it (String) dataObject
-                        Toast.makeText(MainPictureDisplay.this, "Left!", Toast.LENGTH_SHORT).show();
+                    public void onCardExit(int direction, Object dataObject) {
+                        if (Direction.hasLeft(direction)){
+                            makeToast(MainPictureDisplay.this, "Left!");
+                        } else if (Direction.hasRight(direction)){
+                            makeToast(MainPictureDisplay.this, "Right!");
+                        } else if (Direction.hasTop(direction)){
+                            makeToast(MainPictureDisplay.this, "Top!");
+                        } else if (Direction.hasBottom(direction)){
+                            makeToast(MainPictureDisplay.this, "Bottom!");
+                        } else {
+                            makeToast(MainPictureDisplay.this, "No known direction!");
+                        }
                     }
+                    
 
-                    @Override
-                    public void onRightCardExit(Object dataObject) {
-                        Toast.makeText(MainPictureDisplay.this, "Right!", Toast.LENGTH_SHORT).show();
-                    }
+
 
                     @Override
                     public void onAdapterAboutToEmpty(int i) {
@@ -175,11 +179,11 @@ public class MainPictureDisplay extends Activity {
                         Log.d("LIST", "notified");
                     }
 
-
                     @Override
-                    public void onScroll(float v) {
+                    public void onScroll(float v, float v1) {
 
                     }
+
 
                 });
 
@@ -205,6 +209,10 @@ public class MainPictureDisplay extends Activity {
 
 
 
+    }
+
+    private void makeToast(MainPictureDisplay ctx, String s) {
+        Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
     }
 
     private String getOneMoreImage() {

@@ -134,10 +134,7 @@ public class Home extends Activity {
         Intent intent = new Intent(getApplicationContext(),MainPictureDisplay.class);
         startActivity(intent);
     }
-    public void testSlider(View view){
-        Intent intent = new Intent(getApplicationContext(),CardPictureSlider.class);
-        startActivity(intent);
-    }
+
 }
 
 
