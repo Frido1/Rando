@@ -22,7 +22,9 @@ import com.bumptech.glide.Glide;
 import com.example.frido.rando.Utilities.saveBitmap;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
+
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -139,43 +141,49 @@ public class MainPictureDisplay extends Activity {
         imagesToLoad = getImageURLS();
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
         mContentView.setAdapter(adapater);
-        mContentView.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
-                                            @Override
-                                            public void removeFirstObjectInAdapter() {
-                                                // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                                                Log.d("LIST", "removed object!");
-                                                imagesToLoad.remove(0);
-                                                adapater.notifyDataSetChanged();
-                                            }
-
-                                            @Override
-                                            public void onLeftCardExit(Object dataObject) {
-                                                //Do something on the left!
-                                                //You also have access to the original object.
-                                                //If you want to use it just cast it (String) dataObject
-                                                Toast.makeText(MainPictureDisplay.this, "Left!", Toast.LENGTH_SHORT).show();
-                                            }
-
-                                            @Override
-                                            public void onRightCardExit(Object dataObject) {
-                                                Toast.makeText(MainPictureDisplay.this, "Right!", Toast.LENGTH_SHORT).show();
-                                            }
-
-            @Override
-            public void onAdapterAboutToEmpty(int i) {
-                imagesToLoad.add(getOneMoreImage());
-               adapater.notifyDataSetChanged();
-                Log.d("LIST", "notified");
+        mContentView.setFlingListener
+                (new SwipeFlingAdapterView.onFlingListener() {
+                    @Override
+                    public void removeFirstObjectInAdapter() {
+                        // this is the simplest way to delete an object from the Adapter (/AdapterView)
+                        Log.d("LIST", "removed object!");
+                        imagesToLoad.remove(0);
+                        adapater.notifyDataSetChanged();
+                    }
 
 
-            }
 
-            @Override
-            public void onScroll(float v) {
 
-            }
 
-        });
+                    @Override
+                    public void onLeftCardExit(Object dataObject) {
+                        //Do something on the left!
+                        //You also have access to the original object.
+                        //If you want to use it just cast it (String) dataObject
+                        Toast.makeText(MainPictureDisplay.this, "Left!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onRightCardExit(Object dataObject) {
+                        Toast.makeText(MainPictureDisplay.this, "Right!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onAdapterAboutToEmpty(int i) {
+                        imagesToLoad.add(getOneMoreImage());
+                        adapater.notifyDataSetChanged();
+                        Log.d("LIST", "notified");
+                    }
+
+
+                    @Override
+                    public void onScroll(float v) {
+
+                    }
+
+                });
+
+
         mContentView.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int i, Object o) {

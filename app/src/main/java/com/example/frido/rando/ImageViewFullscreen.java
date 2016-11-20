@@ -100,6 +100,12 @@ public class ImageViewFullscreen extends AppCompatActivity {
         }
     };
     private PhotoViewAttacher photoViewAttacher;
+    private File filePath;
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +124,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
 
         //Drawable d = getDrawableFromFile();
         String fileName = getIntent().getStringExtra("fileName");
-        File filePath = getFileStreamPath(fileName);
+        filePath = getFileStreamPath(fileName);
 
         Glide.with(context.getApplicationContext())
                 .load(filePath)
@@ -161,6 +167,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
 
                 @Override
                 public void onOutsidePhotoTap() {
+                    filePath.delete();
                     finish();
 
                 }
