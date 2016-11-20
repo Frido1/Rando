@@ -2,6 +2,9 @@ package com.example.frido.rando;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,11 +13,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.FitCenter;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+
+import java.io.File;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -39,7 +48,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private ImageViewTouch mContentView;
+    private ImageView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -90,6 +99,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
             return false;
         }
     };
+    private PhotoViewAttacher photoViewAttacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,29 +114,60 @@ public class ImageViewFullscreen extends AppCompatActivity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreenImage_center_horizontal);
-        mContentView = (ImageViewTouch) findViewById(R.id.fullscreenImage_content);
+        mContentView = (ImageView) findViewById(R.id.fullscreenImage_content);
 
-        Glide.with(context)
-                .load(getIntent().getStringExtra("imageToView"))
-                .bitmapTransform(new CroppingTransformation(context), new FitCenter(context))
-                .into(mContentView);
-        mContentView.setScaleType(ImageViewTouch.ScaleType.CENTER);
+        //Drawable d = getDrawableFromFile();
+        String fileName = getIntent().getStringExtra("fileName");
+        File filePath = getFileStreamPath(fileName);
+
+        Glide.with(context.getApplicationContext())
+                .load(filePath)
+                .asBitmap()
+                .transform(new CroppingTransformation(getApplicationContext()))
+                .into(loadReady);
 
 
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.Fulllscreen_dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
+
+    private Drawable getDrawableFromFile() {
+        String fileName = getIntent().getStringExtra("fileName");
+        File filePath = getFileStreamPath(fileName);
+        Drawable d = Drawable.createFromPath(filePath.toString());
+        return d;
+    }
+
+
+    private SimpleTarget loadReady = new SimpleTarget<Bitmap>() {
+
+
+        @Override
+        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+            mContentView.setImageBitmap(resource);
+            photoViewAttacher = new PhotoViewAttacher(mContentView);
+            photoViewAttacher.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            photoViewAttacher.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+                @Override
+                public void onPhotoTap(View view, float x, float y) {
+                    toggle();
+                }
+
+                @Override
+                public void onOutsidePhotoTap() {
+                    finish();
+
+                }
+            });
+
+        }
+    };
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

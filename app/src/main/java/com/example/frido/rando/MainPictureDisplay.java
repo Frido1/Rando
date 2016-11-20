@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.frido.rando.Utilities.saveBitmap;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -103,7 +107,7 @@ public class MainPictureDisplay extends Activity {
     private  String imageURLFatPita = "http://fatpita.net/images/image%20";
     private final int Total_FATPITA_Images = 20240;
     private ArrayList<String> imagesToLoad = new ArrayList<String>();
-
+    private saveBitmap saveBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +126,7 @@ public class MainPictureDisplay extends Activity {
 
 
         // Set up the user interaction to manually show or hide the system UI.
-        //ToDo
+
 
 
         // Upon interacting with UI controls, delay any scheduled hide()
@@ -159,10 +163,10 @@ public class MainPictureDisplay extends Activity {
 
             @Override
             public void onAdapterAboutToEmpty(int i) {
-                imagesToLoad .add(getOneMoreImage());
+                imagesToLoad.add(getOneMoreImage());
                adapater.notifyDataSetChanged();
                 Log.d("LIST", "notified");
-                i++;
+
 
             }
 
@@ -175,9 +179,15 @@ public class MainPictureDisplay extends Activity {
         mContentView.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int i, Object o) {
-                View view = mContentView.getSelectedView();
                 Intent intent = new Intent(getApplicationContext(),ImageViewFullscreen.class);
                 intent.putExtra("imageToView", ""+o);
+                String filename =  saveBitmap.createFilename((String) o);
+                intent.putExtra("fileName",filename);
+                ImageView tempView = (ImageView) mContentView.getSelectedView();
+                Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
+                saveBitmap = new saveBitmap(filename,bi,getApplicationContext());
+                saveBitmap.save();
+
                 startActivity(intent);
 
 
@@ -191,9 +201,10 @@ public class MainPictureDisplay extends Activity {
 
     private String getOneMoreImage() {
         Random rand = new Random();
+        String placeHolder = imageURLFatPita;
         int fatPitaImage =  rand.nextInt(Total_FATPITA_Images)+1;
-        imageURLFatPita = imageURLFatPita+"("+fatPitaImage+").jpg";
-        return imageURLFatPita ;
+        placeHolder = placeHolder+"("+fatPitaImage+").jpg";
+        return placeHolder ;
     }
 
     private ArrayList<String> getImageURLS() {
