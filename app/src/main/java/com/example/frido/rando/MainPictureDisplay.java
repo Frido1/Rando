@@ -3,34 +3,27 @@ package com.example.frido.rando;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.frido.rando.Utilities.saveBitmap;
-import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-import com.lorentzos.flingswipe.Direction;
 
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
-import butterknife.BindView;
-import it.sephiroth.android.library.imagezoom.ImageViewTouch;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
+import in.arjsna.swipecardlib.SwipeCardView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -55,7 +48,7 @@ public class MainPictureDisplay extends Activity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private SwipeFlingAdapterView mContentView;
+    private SwipeCardView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -124,7 +117,7 @@ public class MainPictureDisplay extends Activity {
 
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = (SwipeFlingAdapterView) findViewById(R.id.flingContainerFrame);
+        mContentView = (SwipeCardView) findViewById(R.id.flingContainerFrame);
 
 
 
@@ -142,58 +135,48 @@ public class MainPictureDisplay extends Activity {
         imagesToLoad = getImageURLS();
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
         mContentView.setAdapter(adapater);
-
-
-        mContentView.setFlingListener
-                (new SwipeFlingAdapterView.onFlingListener() {
-                    @Override
-                    public void removeFirstObjectInAdapter() {
-                        // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                        Log.d("LIST", "removed object!");
-                        imagesToLoad.remove(0);
-                        adapater.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCardExit(int direction, Object dataObject) {
-                        if (Direction.hasLeft(direction)){
-                            makeToast(MainPictureDisplay.this, "Left!");
-                        } else if (Direction.hasRight(direction)){
-                            makeToast(MainPictureDisplay.this, "Right!");
-                        } else if (Direction.hasTop(direction)){
-                            makeToast(MainPictureDisplay.this, "Top!");
-                        } else if (Direction.hasBottom(direction)){
-                            makeToast(MainPictureDisplay.this, "Bottom!");
-                        } else {
-                            makeToast(MainPictureDisplay.this, "No known direction!");
-                        }
-                    }
-                    
-
-
-
-                    @Override
-                    public void onAdapterAboutToEmpty(int i) {
-                        imagesToLoad.add(getOneMoreImage());
-                        adapater.notifyDataSetChanged();
-                        Log.d("LIST", "notified");
-                    }
-
-                    @Override
-                    public void onScroll(float v, float v1) {
-
-                    }
-
-
-                });
-
-
-        mContentView.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
+        mContentView.setFlingListener(new SwipeCardView.OnCardFlingListener() {
             @Override
-            public void onItemClicked(int i, Object o) {
+            public void onCardExitLeft(Object dataObject) {
+                makeToast(getApplicationContext(),"Left");
+            }
+
+            @Override
+            public void onCardExitRight(Object dataObject) {
+                makeToast(getApplicationContext(),"Right");
+            }
+
+            @Override
+            public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                imagesToLoad .add(getOneMoreImage());
+                adapater.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onScroll(float scrollProgressPercent) {
+
+            }
+
+            @Override
+            public void onCardExitTop(Object dataObject) {
+                makeToast(getApplicationContext(),"Top");
+
+            }
+
+            @Override
+            public void onCardExitBottom(Object dataObject) {
+                makeToast(getApplicationContext(),"Bottom");
+
+            }
+        });
+
+
+        mContentView.setOnItemClickListener(new SwipeCardView.OnItemClickListener() {
+            @Override
+            public void onItemClicked(int itemPosition, Object dataObject) {
                 Intent intent = new Intent(getApplicationContext(),ImageViewFullscreen.class);
-                intent.putExtra("imageToView", ""+o);
-                String filename =  saveBitmap.createFilename((String) o);
+                intent.putExtra("imageToView", ""+dataObject);
+                String filename =  saveBitmap.createFilename((String) dataObject);
                 intent.putExtra("fileName",filename);
                 ImageView tempView = (ImageView) mContentView.getSelectedView();
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
@@ -201,7 +184,6 @@ public class MainPictureDisplay extends Activity {
                 saveBitmap.save();
 
                 startActivity(intent);
-
 
             }
         });
@@ -211,7 +193,7 @@ public class MainPictureDisplay extends Activity {
 
     }
 
-    private void makeToast(MainPictureDisplay ctx, String s) {
+    private void makeToast(Context ctx, String s) {
         Toast.makeText(ctx, s, Toast.LENGTH_SHORT).show();
     }
 

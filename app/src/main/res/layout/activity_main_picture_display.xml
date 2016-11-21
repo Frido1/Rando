@@ -10,13 +10,13 @@
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <com.lorentzos.flingswipe.SwipeFlingAdapterView
-        app:direction=""
+    <in.arjsna.swipecardlib.SwipeCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/flingContainerFrame"
+        app:max_visible="3"
         >
-    </com.lorentzos.flingswipe.SwipeFlingAdapterView>
+    </in.arjsna.swipecardlib.SwipeCardView>
 
 
     <!-- This FrameLayout insets its children based on system windows using
