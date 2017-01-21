@@ -46,10 +46,22 @@ public class saveBitmap {
     public static String createFilename(String url){
         //http://fatpita.net/images/image%20(4378).jpg
         String temp = url;
+        temp = cleanup(temp);
+        return  temp;
+    }
+
+    private static String cleanup(String temp) {
         int start = temp.lastIndexOf("(");
         temp = temp.substring(start);
         temp = temp.replace("(","");
         temp = temp.replace(")","");
+        return  temp;
+    }
+
+    public  static  String createThumbnailFileName (String url){
+        String temp = url;
+        temp = cleanup(temp);
+        temp = "thumb_"+temp;
         return  temp;
     }
 

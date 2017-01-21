@@ -3,12 +3,16 @@ package com.example.frido.rando;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,7 +21,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.frido.rando.Database.RandoDatabaseContract;
+import com.example.frido.rando.Database.RandoDbHelper;
+import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.Utilities.saveBitmap;
+
 
 
 import java.util.ArrayList;
@@ -104,10 +112,15 @@ public class MainPictureDisplay extends Activity {
     private final int Total_FATPITA_Images = 20240;
     private ArrayList<String> imagesToLoad = new ArrayList<String>();
     private saveBitmap saveBitmap;
+    private String thumbnailName;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // TODO: 1/20/2017 Because they can be long-running, be sure that you call getWritableDatabase() or getReadableDatabase() in a background thread, such as with AsyncTask or IntentService.
+        RandoDbHelper dbHelper = new RandoDbHelper(getApplicationContext());
+        db = dbHelper.getWritableDatabase();
 
         setContentView(R.layout.activity_main_picture_display);
         ActionBar actionBar = getActionBar();
@@ -120,8 +133,8 @@ public class MainPictureDisplay extends Activity {
         mContentView = (SwipeCardView) findViewById(R.id.flingContainerFrame);
 
 
+        final ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
 
-        // Set up the user interaction to manually show or hide the system UI.
 
 
 
@@ -144,6 +157,21 @@ public class MainPictureDisplay extends Activity {
             @Override
             public void onCardExitRight(Object dataObject) {
                 makeToast(getApplicationContext(),"Right");
+                ImageView tempView = (ImageView) mContentView.getChildAt((mContentView.getChildCount()-1));
+                Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
+                Bitmap  bitmap =thumbnailUtils.extractThumbnail(bi,250,250);
+                thumbnailName = saveBitmap.createThumbnailFileName(dataObject.toString());
+
+                // Create a new map of values, where column names are the keys
+                ContentValues values = new ContentValues();
+                values.put(RandoDatabaseContract.RandoDatabase.COLUMN_URL, dataObject.toString());
+                values.put(RandoDatabaseContract.RandoDatabase.COLUMN_THUMBNAIL_ID,thumbnailName);
+                db.insert(RandoDatabaseContract.RandoDatabase.TABLE_NAME,null,values);
+
+                //save thumbnail file
+                saveBitmap = new saveBitmap(thumbnailName,bitmap,getApplicationContext());
+                saveBitmap.save();
+
             }
 
             @Override
@@ -187,7 +215,6 @@ public class MainPictureDisplay extends Activity {
 
             }
         });
-
 
 
 
@@ -281,5 +308,11 @@ public class MainPictureDisplay extends Activity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    @Override
+    protected void onDestroy() {
+        db.close();
+        super.onDestroy();
     }
 }
