@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  * Created by fjmar on 11/16/2016.
  */
 
-public class CustomImageViewAdapater extends ArrayAdapter {
+public class CustomImageViewAdapater extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<String> imageUrls;
@@ -25,15 +26,10 @@ public class CustomImageViewAdapater extends ArrayAdapter {
     private   ViewHolder holder;
 
     public CustomImageViewAdapater(Context context, ArrayList<String> imageUrls) {
-        super(context, R.layout.pictures, imageUrls);
-
         this.context = context;
         this.imageUrls = imageUrls;
-
-        inflater = LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
     }
-
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -53,7 +49,7 @@ public class CustomImageViewAdapater extends ArrayAdapter {
         Glide.with(context)
                 .load(imageUrls.get(position))
                 .asBitmap()
-                //  .placeholder(R.mipmap.ic_launcher)
+                  .placeholder(R.mipmap.ic_launcher)
                 .thumbnail(0.1f)
                 .transform(new CroppingTransformation(context))
                 .into(imageViewTouch);
@@ -75,6 +71,12 @@ public class CustomImageViewAdapater extends ArrayAdapter {
     public String getItem(int position) {
         return imageUrls.get(position);
     }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
     public void setImageUrls(ArrayList<String> imageUrls){
         this.imageUrls= imageUrls;
     }
