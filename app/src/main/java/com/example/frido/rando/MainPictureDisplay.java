@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.frido.rando.Database.RandoDatabaseContract;
 import com.example.frido.rando.Database.RandoDbHelper;
 import com.example.frido.rando.Objects.RandoPicture;
+import com.example.frido.rando.Utilities.CustomImageViewAdapater;
 import com.example.frido.rando.Utilities.saveBitmap;
 
 

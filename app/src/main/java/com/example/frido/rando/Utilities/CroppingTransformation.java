@@ -1,4 +1,4 @@
-package com.example.frido.rando;
+package com.example.frido.rando.Utilities;
 
 import android.content.Context;
 import android.graphics.Bitmap;

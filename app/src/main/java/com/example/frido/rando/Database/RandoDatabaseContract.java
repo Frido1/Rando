@@ -13,7 +13,6 @@ public class RandoDatabaseContract {
     }
 
 
-
     /* Inner class that defines the table contents */
     public static class RandoDatabase implements BaseColumns {
         public static final String TABLE_NAME = "RandoObjects";

@@ -134,6 +134,10 @@ public class Home extends Activity {
         Intent intent = new Intent(getApplicationContext(),MainPictureDisplay.class);
         startActivity(intent);
     }
+    public void startHistoryActivity(View view){
+        Intent intent = new Intent(getApplicationContext(),History.class);
+        startActivity(intent);
+    }
 
 }
 
