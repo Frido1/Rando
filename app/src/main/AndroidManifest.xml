@@ -44,11 +44,20 @@
                 android:value="com.example.frido.rando.MainPictureDisplay" />
         </activity>
 
+        <meta-data
+            android:name="DATABASE"
+            android:value="rando.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="2" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.example.frido.rando" />
 
-        <meta-data android:name="DATABASE" android:value="rando.db" />
-        <meta-data android:name="VERSION" android:value="2" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.example.frido.rando" />
+        <activity android:name=".HistoryGallery"></activity>
     </application>
 
 </manifest>

@@ -2,7 +2,6 @@ package com.example.frido.rando;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
@@ -16,13 +15,12 @@ import android.support.v4.app.NavUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.example.frido.rando.Utilities.CroppingTransformation;
 
 import java.io.File;
 
-import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**

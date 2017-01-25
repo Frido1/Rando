@@ -12,9 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.frido.rando.Database.RandoDatabaseContract;
 import com.example.frido.rando.Database.RandoDbHelper;
-import com.example.frido.rando.Objects.RandoPicture;
+import com.example.frido.rando.Utilities.CustomImageViewAdapater;
 import com.example.frido.rando.Utilities.saveBitmap;
 
 
