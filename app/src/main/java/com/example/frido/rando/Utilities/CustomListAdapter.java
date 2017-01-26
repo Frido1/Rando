@@ -62,8 +62,6 @@ public class CustomListAdapter extends BaseAdapter {
         }
 
         String URL = imageURLs.get(position);
-
-        holder.thumnbnailName.setText(URL);
         filePath = context.getFileStreamPath(URL);
         Glide.with(context).load(filePath).asBitmap().into(holder.thumbnail);
 
@@ -72,8 +70,6 @@ public class CustomListAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        @BindView(R.id.history_Item_URL)
-        TextView thumnbnailName;
         @BindView(R.id.history_item_Image)ImageView thumbnail;
 
         public ViewHolder(View view){
