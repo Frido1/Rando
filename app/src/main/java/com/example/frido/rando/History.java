@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.example.frido.rando.Database.RandoDatabaseContract;
 import com.example.frido.rando.Database.RandoDbHelper;
 import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.example.frido.rando.Utilities.VoronoAdapter;
 
 import java.util.ArrayList;
 
@@ -27,9 +28,12 @@ public class History extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         listUrls = getURLSFromDatabase();
         ButterKnife.bind(this);
-        CustomListAdapter customListAdapter = new CustomListAdapter(getApplicationContext(),listUrls);
+        /*CustomListAdapter customListAdapter = new CustomListAdapter(getApplicationContext(),listUrls);
         listView.setAdapter(customListAdapter);
+*/
 
+        VoronoAdapter voronoAdapter = new VoronoAdapter(listUrls,getApplicationContext());
+        listView.setAdapter(voronoAdapter);
     }
 
     private ArrayList<String> getURLSFromDatabase() {

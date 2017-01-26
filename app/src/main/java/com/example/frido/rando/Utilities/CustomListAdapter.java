@@ -27,6 +27,7 @@ public class CustomListAdapter extends BaseAdapter {
     private ArrayList<String> imageURLs;
     private File filePath;
 
+
     public CustomListAdapter(Context context,ArrayList<String> imageURLs) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
