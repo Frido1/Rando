@@ -48,6 +48,7 @@ public class MainPictureDisplay extends Activity {
     private SQLiteDatabase db;
     private SwipeCardView mContentView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,9 @@ public class MainPictureDisplay extends Activity {
                 //save thumbnail file
                 saveBitmap = new saveBitmap(thumbnailName,bitmap,getApplicationContext());
                 saveBitmap.save();
+
+                //setup FireBase DB
+
 
             }
 

@@ -1,6 +1,5 @@
 package com.example.frido.rando.Fragments;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -65,7 +64,7 @@ public class HistoryListFragment extends Fragment  {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.history_menu,menu);
+        inflater.inflate(R.menu.history_list_menu,menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -84,6 +83,7 @@ public class HistoryListFragment extends Fragment  {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.replace(R.id.fragmentContainer, VoronoFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
     }
 

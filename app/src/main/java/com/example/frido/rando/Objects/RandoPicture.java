@@ -11,7 +11,24 @@ public class RandoPicture  {
     private String  url;
     private String thumbnail_ID;
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getThumbnail_ID() {
+        return thumbnail_ID;
+    }
+
+    public void setThumbnail_ID(String thumbnail_ID) {
+        this.thumbnail_ID = thumbnail_ID;
+    }
+
     public RandoPicture(){
+
 
     }
 

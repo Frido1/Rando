@@ -18,7 +18,6 @@ import android.widget.ListView;
 import com.example.frido.rando.Database.RandoDatabaseContract;
 import com.example.frido.rando.Database.RandoDbHelper;
 import com.example.frido.rando.R;
-import com.example.frido.rando.Utilities.CustomListAdapter;
 import com.example.frido.rando.Utilities.VoronoAdapter;
 
 import java.util.ArrayList;
@@ -35,6 +34,12 @@ public class VoronoFragment extends Fragment {
     private ArrayList<String> listUrls;
     @BindView(R.id.historyListView) ListView listView;
     private Unbinder unbinder;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -57,12 +62,12 @@ public class VoronoFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.history_menu,menu);
+        inflater.inflate(R.menu.vorono_history_menu,menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.voronoiSwitch:
+            case R.id.listSwitch:
                 switchFragments();
                 break;
             default: break;
@@ -75,6 +80,7 @@ public class VoronoFragment extends Fragment {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragmentContainer, historyListFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
     }
 

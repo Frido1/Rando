@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.example.frido.rando.Database.RandoDatabaseContract;
 import com.example.frido.rando.Database.RandoDbHelper;
+import com.example.frido.rando.Fragments.HistoryListFragment;
 import com.example.frido.rando.Fragments.VoronoFragment;
 import com.example.frido.rando.Utilities.CustomListAdapter;
 import com.example.frido.rando.Utilities.VoronoAdapter;
@@ -26,13 +27,18 @@ import butterknife.ButterKnife;
 
 public class History extends AppCompatActivity {
     private LayoutInflater layoutInflater;
-    private ArrayList<String> listUrls;
-    @BindView(R.id.historyListView) ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Fragment historyListFragment = new HistoryListFragment();
+        transaction.add(R.id.fragmentContainer,historyListFragment);
+        transaction.commit();
+
     }
 
 

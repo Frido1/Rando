@@ -4,11 +4,5 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" android:id="@+id/fragmentContainer">
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/historyListFragment"
-        android:name="com.example.frido.rando.Fragments.HistoryListFragment"
-        tools:layout="@layout/fragment_history"></fragment>
 
 </LinearLayout>
