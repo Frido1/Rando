@@ -26,7 +26,9 @@ import com.example.frido.rando.Database.RandoDbHelper;
 import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.Utilities.CustomImageViewAdapater;
 import com.example.frido.rando.Utilities.saveBitmap;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -96,6 +98,14 @@ public class MainPictureDisplay extends Activity {
                 saveBitmap.save();
 
                 //setup FireBase DB
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference reference = database.getReference();
+                RandoPicture randoPicture = new RandoPicture(dataObject.toString(),thumbnailName);
+                String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                reference.child("users").child(userID).push().setValue(randoPicture);
+                //reference.setValue(randoPicture);
+
 
 
             }
