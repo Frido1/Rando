@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,12 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.frido.rando.Database.RandoDatabaseContract;
-import com.example.frido.rando.Database.RandoDbHelper;
+import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.VoronoAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +42,7 @@ public class VoronoFragment extends Fragment {
     private ArrayList<String> listUrls;
     @BindView(R.id.historyListView) ListView listView;
     private Unbinder unbinder;
+    private VoronoAdapter voronoAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,10 +54,10 @@ public class VoronoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history,container,false);
-        listUrls = getURLSFromDatabase();
+        listUrls = getURLSFromFirebase();
         unbinder = ButterKnife.bind(this,view );
-        VoronoAdapter voronoAdapter = new VoronoAdapter(listUrls,getActivity().getApplicationContext());
-        listView.setAdapter(voronoAdapter);
+        voronoAdapter = new VoronoAdapter(listUrls,getActivity().getApplicationContext());
+
         return view;
 
     }
@@ -84,21 +93,34 @@ public class VoronoFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private ArrayList<String> getURLSFromDatabase() {
-        ArrayList<String> listUrls = new ArrayList<String>();
-        RandoDbHelper dbHelper = new RandoDbHelper(getActivity().getApplicationContext());
-        SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
-        String[] projection = {
-                RandoDatabaseContract.RandoDatabase.COLUMN_THUMBNAIL_ID,
-        };
-        Cursor cursor = sqLiteDatabase.query(
-                RandoDatabaseContract.RandoDatabase.TABLE_NAME,projection,null,null,null,null,null
-        );
-        while (cursor.moveToNext()){
-            String temp =  cursor.getString(cursor.getColumnIndex(RandoDatabaseContract.RandoDatabase.COLUMN_THUMBNAIL_ID));
-            listUrls.add(temp);
+    private ArrayList<String> getURLSFromFirebase() {
+        final ArrayList<String> urls = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String userID = user.getUid();
+        DatabaseReference reference = database.getReference("users").child(userID);
 
-        }
-        return listUrls;
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("firebase",dataSnapshot.toString());
+                Iterable<DataSnapshot> dataSnapshotIterator = dataSnapshot.getChildren();
+                Iterator<DataSnapshot> iterator = dataSnapshotIterator.iterator();
+                while (iterator.hasNext()){
+                    RandoPicture randoPicture =iterator.next().getValue(RandoPicture.class);
+                    urls.add(randoPicture.getThumbnail_ID());
+                }
+                voronoAdapter.update(urls);
+                listView.setAdapter(voronoAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return urls;
     }
 }

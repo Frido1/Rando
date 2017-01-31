@@ -3,10 +3,8 @@ package com.example.frido.rando.Fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,12 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.frido.rando.Database.RandoDatabaseContract;
-import com.example.frido.rando.Database.RandoDbHelper;
+import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +40,9 @@ public class HistoryListFragment extends Fragment  {
     @BindView(R.id.historyListView)
     ListView listView;
     private Unbinder unbinder;
+    private CustomListAdapter customListAdapter;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,16 +50,44 @@ public class HistoryListFragment extends Fragment  {
 
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_history,container,false);
-        listUrls = getURLSFromDatabase();
+        listUrls = getURLSFromFirebase();
         unbinder = ButterKnife.bind(this,view );
-        CustomListAdapter customListAdapter = new CustomListAdapter(getActivity().getApplicationContext(),listUrls);
+        customListAdapter = new CustomListAdapter(getActivity().getApplicationContext(),listUrls);
         listView.setAdapter(customListAdapter);
         return view;
 
+    }
+
+    private ArrayList<String> getURLSFromFirebase() {
+        final ArrayList<String> urls = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String userID = user.getUid();
+        DatabaseReference reference = database.getReference("users").child(userID);
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("firebase",dataSnapshot.toString());
+                Iterable<DataSnapshot> dataSnapshotIterator = dataSnapshot.getChildren();
+                Iterator<DataSnapshot> iterator = dataSnapshotIterator.iterator();
+               while (iterator.hasNext()){
+                   RandoPicture randoPicture =iterator.next().getValue(RandoPicture.class);
+                   urls.add(randoPicture.getThumbnail_ID());
+               }
+                customListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        return urls;
     }
 
     @Override
@@ -70,14 +106,27 @@ public class HistoryListFragment extends Fragment  {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.voronoiSwitch:
-                switchFragments();
+                switchVoronoFragment();
+                break;
+            case R.id.gridLayout:
+                switchGridoFragments();
                 break;
             default: break;
         }
         return true;
     }
 
-    private void switchFragments() {
+    private void switchGridoFragments() {
+        Fragment gridFragment   = new HistoryStaggeredGridFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragmentContainer, gridFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
+    }
+
+    private void switchVoronoFragment() {
         Fragment VoronoFragment = new VoronoFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -87,21 +136,4 @@ public class HistoryListFragment extends Fragment  {
         fragmentTransaction.commit();
     }
 
-    private ArrayList<String> getURLSFromDatabase() {
-        ArrayList<String> listUrls = new ArrayList<String>();
-        RandoDbHelper dbHelper = new RandoDbHelper(getActivity().getApplicationContext());
-        SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
-        String[] projection = {
-                RandoDatabaseContract.RandoDatabase.COLUMN_THUMBNAIL_ID,
-        };
-        Cursor cursor = sqLiteDatabase.query(
-                RandoDatabaseContract.RandoDatabase.TABLE_NAME,projection,null,null,null,null,null
-        );
-        while (cursor.moveToNext()){
-            String temp =  cursor.getString(cursor.getColumnIndex(RandoDatabaseContract.RandoDatabase.COLUMN_THUMBNAIL_ID));
-            listUrls.add(temp);
-
-        }
-        return listUrls;
-    }
 }

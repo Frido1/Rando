@@ -3,6 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item android:title="Grid"
+        android:id="@+id/gridLayout"
+        android:icon="@drawable/grid_actionbar"
+        app:showAsAction="always" />
     <item android:title="VoronoiSwitch"
         android:visible="true"
         app:showAsAction="always"

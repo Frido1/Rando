@@ -66,6 +66,13 @@ public class VoronoAdapter extends BaseAdapter {
         return position;
     }
 
+    public void update (ArrayList<String> imageURLs) {
+        this.imageURLs = imageURLs;
+        this.pictureCount = 0;
+        this.elements= getElementCount();
+
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;

@@ -1,0 +1,103 @@
+package com.example.frido.rando.Fragments;
+
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.frido.rando.Objects.RandoPicture;
+import com.example.frido.rando.R;
+import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.example.frido.rando.Utilities.RecycleViewerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
+/**
+ * Created by fjmar on 1/31/2017.
+ */
+
+public class HistoryStaggeredGridFragment extends Fragment {
+    private ArrayList<String> listUrls;
+    @BindView(R.id.staggeredRecycleView)
+    RecyclerView recyclerView;
+    RecycleViewerAdapter recycleViewerAdapter;
+    private Unbinder unbinder;
+    private Context context;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        listUrls = getURLSFromFirebase();
+        this.context = getActivity();
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_staggeredgrid,container,false);
+        unbinder = ButterKnife.bind(this,view );
+        recycleViewerAdapter = new RecycleViewerAdapter(listUrls,context);
+        return  view;
+    }
+
+    private ArrayList<String> getURLSFromFirebase() {
+            final ArrayList<String> urls = new ArrayList<>();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            final String userID = user.getUid();
+            DatabaseReference reference = database.getReference("users").child(userID);
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d("firebase",dataSnapshot.toString());
+                    Iterable<DataSnapshot> dataSnapshotIterator = dataSnapshot.getChildren();
+                    Iterator<DataSnapshot> iterator = dataSnapshotIterator.iterator();
+                    while (iterator.hasNext()){
+                        RandoPicture randoPicture =iterator.next().getValue(RandoPicture.class);
+                        urls.add(randoPicture.getThumbnail_ID());
+                    }
+                    recyclerView.setAdapter(recycleViewerAdapter);
+                    StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,1);
+                    gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+
+
+                    recyclerView.setLayoutManager(gridLayoutManager);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            return urls;
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+}
