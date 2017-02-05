@@ -79,9 +79,22 @@ public class VoronoFragment extends Fragment {
             case R.id.listSwitch:
                 switchFragments();
                 break;
+            case R.id.gridLayout:
+                switchGridFragments();
+                break;
             default: break;
         }
         return true;
+    }
+
+    private void switchGridFragments() {
+        Fragment gridFragment   = new HistoryStaggeredGridFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragmentContainer, gridFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
     }
 
     private void switchFragments() {

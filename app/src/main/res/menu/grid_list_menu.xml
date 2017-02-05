@@ -5,13 +5,12 @@
 
     <item android:title="Linear"
         android:id="@+id/linearLayout"
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/list_action_bar"/>
     <item android:title="VoronoiSwitch"
         android:visible="true"
-        app:showAsAction="always"
-        android:icon="@drawable/vorono_actionbar_icon"
+        android:showAsAction="always"
+        android:icon="@mipmap/triangles"
         android:id="@+id/voronoiSwitch"
-        tools:showAsAction="always"
         android:enabled="true" />
 </menu>

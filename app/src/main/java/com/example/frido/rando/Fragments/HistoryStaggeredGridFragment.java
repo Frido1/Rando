@@ -114,7 +114,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
             case R.id.voronoiSwitch:
                 switchVoronoFragment();
                 break;
-            case R.id.gridLayout:
+            case R.id.listSwitch:
                 switchGridoFragments();
                 break;
             default: break;
@@ -123,11 +123,11 @@ public class HistoryStaggeredGridFragment extends Fragment {
     }
 
     private void switchGridoFragments() {
-        Fragment gridFragment   = new HistoryStaggeredGridFragment();
+        Fragment listFragment   = new HistoryListFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.replace(R.id.fragmentContainer, gridFragment);
+        fragmentTransaction.replace(R.id.fragmentContainer, listFragment);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
     }

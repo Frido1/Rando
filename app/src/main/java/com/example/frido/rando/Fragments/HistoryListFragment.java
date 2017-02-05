@@ -83,6 +83,7 @@ public class HistoryListFragment extends Fragment  {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                Log.d("database", databaseError.toString());
 
             }
         });
