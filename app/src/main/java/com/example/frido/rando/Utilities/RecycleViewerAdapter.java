@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ public class RecycleViewerAdapter extends RecyclerView.Adapter<RecycleViewerAdap
         this.context = context;
     }
 
+
+
     @Override
     public RecycleViewerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.staggeredgrid_item,parent,false);
@@ -47,18 +50,8 @@ public class RecycleViewerAdapter extends RecyclerView.Adapter<RecycleViewerAdap
     public void onBindViewHolder(RecycleViewerAdapter.ViewHolder holder, int position) {
         final String thumbnailLocation = thumbnails.get(position);
         filePath = context.getFileStreamPath(thumbnailLocation);
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int screenWidth = size.x;
-        int screenHeight = size.y;
-        int x =screenHeight/4;
-        holder.gridItem.setMaxHeight(screenHeight/4);
 
-        Glide.with(context).load(filePath).asBitmap().centerCrop().into(holder.gridItem);
-
-
+       Glide.with(context).load(filePath).into(holder.gridItem);
     }
 
     @Override

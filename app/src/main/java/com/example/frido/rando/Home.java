@@ -90,10 +90,10 @@ public class Home extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        super.onCreateOptionsMenu(menu);
         MenuInflater layoutInflater = getMenuInflater();
         layoutInflater.inflate(R.menu.actionmenu,menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     public void menuLogOut(MenuItem mi) {

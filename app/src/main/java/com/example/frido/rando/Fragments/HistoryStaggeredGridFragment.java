@@ -1,6 +1,8 @@
 package com.example.frido.rando.Fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -39,6 +44,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
     @BindView(R.id.staggeredRecycleView)
     RecyclerView recyclerView;
     RecycleViewerAdapter recycleViewerAdapter;
+    private  StaggeredGridLayoutManager gridLayoutManager;
     private Unbinder unbinder;
     private Context context;
 
@@ -48,6 +54,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
         super.onCreate(savedInstanceState);
         listUrls = getURLSFromFirebase();
         this.context = getActivity();
+        setHasOptionsMenu(true);
 
     }
 
@@ -57,6 +64,9 @@ public class HistoryStaggeredGridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_staggeredgrid,container,false);
         unbinder = ButterKnife.bind(this,view );
         recycleViewerAdapter = new RecycleViewerAdapter(listUrls,context);
+        recyclerView.setAdapter(recycleViewerAdapter);
+        gridLayoutManager = new StaggeredGridLayoutManager(3,1);
+        recyclerView.setLayoutManager(gridLayoutManager);
         return  view;
     }
 
@@ -77,12 +87,10 @@ public class HistoryStaggeredGridFragment extends Fragment {
                         RandoPicture randoPicture =iterator.next().getValue(RandoPicture.class);
                         urls.add(randoPicture.getThumbnail_ID());
                     }
-                    recyclerView.setAdapter(recycleViewerAdapter);
-                    StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2,1);
+                    recycleViewerAdapter.notifyDataSetChanged();
                     gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
 
 
-                    recyclerView.setLayoutManager(gridLayoutManager);
                 }
 
                 @Override
@@ -93,6 +101,45 @@ public class HistoryStaggeredGridFragment extends Fragment {
 
             return urls;
 
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.history_list_menu,menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.voronoiSwitch:
+                switchVoronoFragment();
+                break;
+            case R.id.gridLayout:
+                switchGridoFragments();
+                break;
+            default: break;
+        }
+        return true;
+    }
+
+    private void switchGridoFragments() {
+        Fragment gridFragment   = new HistoryStaggeredGridFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragmentContainer, gridFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
+    }
+
+    private void switchVoronoFragment() {
+        Fragment VoronoFragment = new VoronoFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragmentContainer, VoronoFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
     }
 
     @Override
