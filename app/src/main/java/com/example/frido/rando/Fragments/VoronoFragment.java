@@ -57,6 +57,7 @@ public class VoronoFragment extends Fragment {
         listUrls = getURLSFromFirebase();
         unbinder = ButterKnife.bind(this,view );
         voronoAdapter = new VoronoAdapter(listUrls,getActivity().getApplicationContext());
+        
 
         return view;
 

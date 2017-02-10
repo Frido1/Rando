@@ -1,6 +1,7 @@
 package com.example.frido.rando.Utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.frido.rando.ImageViewFullscreen;
 import com.example.frido.rando.R;
 
 import java.io.File;
@@ -20,6 +22,8 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import quatja.com.vorolay.VoronoiView;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by fjmar on 1/25/2017.
@@ -86,6 +90,7 @@ public class VoronoAdapter extends BaseAdapter {
 
 
 
+
             for (int i = 0; i < numberVoronoiChildren; i++) {
                 View view = layoutInflater.inflate(R.layout.vorono_item_for_template, null, false);
                 holder.voronoi.addView(view);
@@ -96,12 +101,27 @@ public class VoronoAdapter extends BaseAdapter {
                     filePath = context.getFileStreamPath(imageURLs.get(pictureCount));
                     Glide.with(context).load(filePath).asBitmap().into(layout);
                     pictureCount++;
+                    layout.setTag(filePath.getName());
                 }else {
                     Random rnd = new Random();
                     int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
                     layout.setBackgroundColor(color);
                 }
             }
+            holder.voronoi.setOnRegionClickListener(new VoronoiView.OnRegionClickListener() {
+                @Override
+                public void onClick(View view, int i) {
+                    VoronoiView voronoiView = (VoronoiView) view;
+                    RelativeLayout tempView= (RelativeLayout) voronoiView.getChildAt(i);
+                    ImageView imageView = (ImageView) tempView.getChildAt(0);
+                    String thumbnailFilename =(String) imageView.getTag();
+                    Intent intent = new Intent(context,ImageViewFullscreen.class);
+                    intent.putExtra("imageToView", thumbnailFilename);
+                    intent.putExtra("fileName",thumbnailFilename);
+                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                    view.getContext().startActivity(intent);
+                }
+            });
         } else {
             holder = (ViewHolder) convertView.getTag();
         }

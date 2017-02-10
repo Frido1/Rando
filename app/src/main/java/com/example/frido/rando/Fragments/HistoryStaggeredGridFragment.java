@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,10 +16,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 
+import com.example.frido.rando.ImageViewFullscreen;
 import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.example.frido.rando.Utilities.OnItemClickListener;
 import com.example.frido.rando.Utilities.RecycleViewerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,6 +39,8 @@ import java.util.Iterator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static android.R.attr.onClick;
 
 /**
  * Created by fjmar on 1/31/2017.
@@ -63,12 +70,28 @@ public class HistoryStaggeredGridFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_staggeredgrid,container,false);
         unbinder = ButterKnife.bind(this,view );
-        recycleViewerAdapter = new RecycleViewerAdapter(listUrls,context);
+        OnItemClickListener itemClickListener = getListener();
+        recycleViewerAdapter = new RecycleViewerAdapter(listUrls,context,itemClickListener);
         recyclerView.setAdapter(recycleViewerAdapter);
         gridLayoutManager = new StaggeredGridLayoutManager(3,1);
         recyclerView.setLayoutManager(gridLayoutManager);
         return  view;
     }
+
+    private OnItemClickListener getListener() {
+        OnItemClickListener itemClickListener = new OnItemClickListener() {
+            @Override
+            public void onItemClick(String url) {
+                String thumbnailFilename = (String) url;
+                Intent intent = new Intent(getActivity().getApplicationContext(),ImageViewFullscreen.class);
+                intent.putExtra("imageToView", thumbnailFilename);
+                intent.putExtra("fileName",thumbnailFilename);
+                startActivity(intent);
+            }
+        };
+        return itemClickListener;
+    }
+
 
     private ArrayList<String> getURLSFromFirebase() {
             final ArrayList<String> urls = new ArrayList<>();
@@ -106,7 +129,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.history_list_menu,menu);
+        inflater.inflate(R.menu.grid_list_menu,menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,6 +164,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.commit();
     }
+
 
     @Override
     public void onDestroyView() {

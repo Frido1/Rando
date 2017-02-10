@@ -43,6 +43,13 @@ public class saveBitmap {
             ioe.printStackTrace();
         }
     }
+
+    /**
+     *
+     * @param url
+     * @return give it a string url and it will clean it up and return a filepath
+     */
+
     public static String createFilename(String url){
         //http://fatpita.net/images/image%20(4378).jpg
         String temp = url;
@@ -57,7 +64,11 @@ public class saveBitmap {
         temp = temp.replace(")","");
         return  temp;
     }
-
+    /**
+     *
+     * @param url
+     * @return give it a string url and it will clean it up and return a filepath specific for thumbnail
+     */
     public  static  String createThumbnailFileName (String url){
         String temp = url;
         temp = cleanup(temp);

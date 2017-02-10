@@ -3,6 +3,9 @@ package com.example.frido.rando.Fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +14,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.frido.rando.ImageViewFullscreen;
 import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.example.frido.rando.Utilities.saveBitmap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,9 +64,26 @@ public class HistoryListFragment extends Fragment  {
         unbinder = ButterKnife.bind(this,view );
         customListAdapter = new CustomListAdapter(getActivity().getApplicationContext(),listUrls);
         listView.setAdapter(customListAdapter);
+        AdapterView.OnItemClickListener onItemClickListener = getListener(customListAdapter);
+        listView.setOnItemClickListener(onItemClickListener);
         return view;
 
     }
+
+    private AdapterView.OnItemClickListener getListener(final CustomListAdapter customListAdapter) {
+        AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String thumbnailFilename = (String) customListAdapter.getItem(position);
+                Intent intent = new Intent(getActivity().getApplicationContext(),ImageViewFullscreen.class);
+                intent.putExtra("imageToView", thumbnailFilename);
+                intent.putExtra("fileName",thumbnailFilename);
+                startActivity(intent);
+            }
+        };
+                return onItemClickListener;
+    }
+
 
     private ArrayList<String> getURLSFromFirebase() {
         final ArrayList<String> urls = new ArrayList<>();

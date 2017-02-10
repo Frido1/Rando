@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.frido.rando.R;
@@ -31,10 +32,12 @@ public class RecycleViewerAdapter extends RecyclerView.Adapter<RecycleViewerAdap
     private ArrayList<String> thumbnails;
     private File filePath;
     private Context context;
+    private OnItemClickListener listener;
 
-    public RecycleViewerAdapter(ArrayList<String> thumbnails,Context context) {
+    public RecycleViewerAdapter(ArrayList<String> thumbnails,Context context, OnItemClickListener listener) {
         this.thumbnails = thumbnails;
         this.context = context;
+        this.listener = listener;
     }
 
 
@@ -50,6 +53,7 @@ public class RecycleViewerAdapter extends RecyclerView.Adapter<RecycleViewerAdap
     public void onBindViewHolder(RecycleViewerAdapter.ViewHolder holder, int position) {
         final String thumbnailLocation = thumbnails.get(position);
         filePath = context.getFileStreamPath(thumbnailLocation);
+        holder.bind(thumbnails.get(position),listener);
 
        Glide.with(context).load(filePath).into(holder.gridItem);
     }
@@ -65,6 +69,15 @@ public class RecycleViewerAdapter extends RecyclerView.Adapter<RecycleViewerAdap
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+        }
+
+        public void bind(final String s, final OnItemClickListener listener) {
+            gridItem.setOnClickListener( new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(s);
+                }
+            });
         }
     }
 }
