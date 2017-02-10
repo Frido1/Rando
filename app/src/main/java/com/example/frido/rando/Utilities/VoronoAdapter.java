@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.frido.rando.ImageViewFullscreen;
+import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 
 import java.io.File;
@@ -115,8 +116,9 @@ public class VoronoAdapter extends BaseAdapter {
                     RelativeLayout tempView= (RelativeLayout) voronoiView.getChildAt(i);
                     ImageView imageView = (ImageView) tempView.getChildAt(0);
                     String thumbnailFilename =(String) imageView.getTag();
+                    String picUrl = RandoPicture.setFatPitaURL_FromThumbnailName(thumbnailFilename);
                     Intent intent = new Intent(context,ImageViewFullscreen.class);
-                    intent.putExtra("imageToView", thumbnailFilename);
+                    intent.putExtra("imageToView", picUrl);
                     intent.putExtra("fileName",thumbnailFilename);
                     intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                     view.getContext().startActivity(intent);

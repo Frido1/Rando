@@ -49,7 +49,7 @@ public class CustomImageViewAdapater extends BaseAdapter {
         Glide.with(context)
                 .load(imageUrls.get(position))
                 .asBitmap()
-                  .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.mipmap.ic_launcher)
                 .thumbnail(0.1f)
                 .transform(new CroppingTransformation(context))
                 .into(imageViewTouch);

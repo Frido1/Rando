@@ -21,7 +21,6 @@ public class History extends Activity {
         Fragment historyListFragment = new HistoryListFragment();
         transaction.add(R.id.fragmentContainer,historyListFragment);
         transaction.commit();
-
     }
 
 

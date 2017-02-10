@@ -1,6 +1,9 @@
 package com.example.frido.rando.Objects;
 
 
+import com.example.frido.rando.Utilities.Constants;
+import com.example.frido.rando.Utilities.SaveBitmap;
+
 /**
  * Created by fjmar on 1/20/2017.
  */
@@ -11,12 +14,16 @@ public class RandoPicture  {
     private String  url;
     private String thumbnail_ID;
 
-    public String getUrl() {
-        return url;
+    public RandoPicture(String url, String thumbnail_ID) {
+        this.url = url;
+        this.thumbnail_ID = thumbnail_ID;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public RandoPicture(){
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public String getThumbnail_ID() {
@@ -27,13 +34,14 @@ public class RandoPicture  {
         this.thumbnail_ID = thumbnail_ID;
     }
 
-    public RandoPicture(){
-
-
-    }
-
-    public RandoPicture(String url, String thumbnail_ID) {
+    public void setUrl(String url) {
         this.url = url;
-        this.thumbnail_ID = thumbnail_ID;
     }
+    public static String setFatPitaURL_FromThumbnailName(String thumbnail){
+        String temp = SaveBitmap.extractThumbnailNumber(thumbnail);
+        String url = Constants.IMAGEURLFATPITA+temp+").jpg";
+        return url;
+    }
+
+
 }

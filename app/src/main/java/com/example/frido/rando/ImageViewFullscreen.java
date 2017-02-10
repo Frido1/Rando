@@ -1,9 +1,14 @@
 package com.example.frido.rando;
 
 import android.annotation.SuppressLint;
+import android.content.ContentProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,8 +25,11 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.frido.rando.Utilities.CroppingTransformation;
 
 import java.io.File;
+import java.net.URI;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
+
+import static android.support.v4.content.FileProvider.getUriForFile;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -99,6 +107,11 @@ public class ImageViewFullscreen extends AppCompatActivity {
     };
     private PhotoViewAttacher photoViewAttacher;
     private File filePath;
+    private Context context;
+    private String fileName;
+    private Boolean firstView =false;
+    private String extraFirstView = "firstView";
+    private String picUrl;
 
 
 
@@ -108,7 +121,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = getApplicationContext();
+        context = getApplicationContext();
 
         setContentView(R.layout.activity_image_view_fullscreen);
         ActionBar actionBar = getSupportActionBar();
@@ -121,15 +134,29 @@ public class ImageViewFullscreen extends AppCompatActivity {
         mContentView = (ImageView) findViewById(R.id.fullscreenImage_content);
 
         //Drawable d = getDrawableFromFile();
-        String fileName = getIntent().getStringExtra("fileName");
+        fileName = getIntent().getStringExtra("fileName");
         filePath = getFileStreamPath(fileName);
+        picUrl = getIntent().getStringExtra("imageToView");
 
-        Glide.with(context.getApplicationContext())
-                .load(filePath)
-                .asBitmap()
-                .transform(new CroppingTransformation(getApplicationContext()))
-                .into(loadReady);
+        //determine if this is coming from MainPictureDisplay or viewed in History
+        firstView = getIntent().getBooleanExtra(extraFirstView,firstView);
 
+        if(firstView) {
+            Glide.with(context.getApplicationContext())
+                    .load(filePath)
+                    .asBitmap()
+                    .transform(new CroppingTransformation(getApplicationContext()))
+                    .into(loadReady);
+        }else{
+           //will load high res image from web.  
+            // TODO: 2/10/2017 add a check for internet or if image didn't load then use thumbnail 
+            Glide.with(context)
+                    .load(picUrl)
+                    .asBitmap()
+                    .placeholder(R.mipmap.ic_launcher)
+                    .transform(new CroppingTransformation(context))
+                    .into(loadReady);
+        }
 
 
 
@@ -137,7 +164,7 @@ public class ImageViewFullscreen extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.Fulllscreen_dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.Fulllscreen_share_button).setOnTouchListener(mDelayHideTouchListener);
     }
 
 
@@ -230,5 +257,19 @@ public class ImageViewFullscreen extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    public void onClickShare(View view){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        Uri uri = Uri.fromFile(filePath);
+        File newFile = new File(context.getFilesDir(),fileName);
+        Uri contentUri = getUriForFile(context,"com.example.frido.rando.fileprovider",newFile);
+        String temp = uri.getPath();
+        sendIntent.putExtra(Intent.EXTRA_STREAM,contentUri);
+        sendIntent.setType("image/*");
+        startActivity(Intent.createChooser(sendIntent,getResources().getText(R.string.send_to)));
+
+
     }
 }

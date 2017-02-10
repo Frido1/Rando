@@ -63,7 +63,11 @@ public class CustomListAdapter extends BaseAdapter {
 
         String URL = imageURLs.get(position);
         filePath = context.getFileStreamPath(URL);
-        Glide.with(context).load(filePath).asBitmap().into(holder.thumbnail);
+        if(filePath.exists()) {
+            Glide.with(context).load(filePath).asBitmap().into(holder.thumbnail);
+        }else{
+
+        }
 
         return convertView;
 

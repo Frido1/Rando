@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
@@ -15,8 +14,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.frido.rando.Objects.RandoPicture;
+import com.example.frido.rando.Utilities.Constants;
 import com.example.frido.rando.Utilities.CustomImageViewAdapater;
-import com.example.frido.rando.Utilities.saveBitmap;
+import com.example.frido.rando.Utilities.SaveBitmap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,10 +32,10 @@ import in.arjsna.swipecardlib.SwipeCardView;
  */
 public class MainPictureDisplay extends Activity {
 
-    private  String imageURLFatPita = "http://fatpita.net/images/image%20";
+    private  String imageURLFatPita = Constants.IMAGEURLFATPITA;
     private final int Total_FATPITA_Images = 20240;
     private ArrayList<String> imagesToLoad = new ArrayList<String>();
-    private saveBitmap saveBitmap;
+    private SaveBitmap SaveBitmap;
     private String thumbnailName;
     private SwipeCardView mContentView;
 
@@ -69,13 +69,15 @@ public class MainPictureDisplay extends Activity {
                 makeToast(getApplicationContext(),"Right");
                 ImageView tempView = (ImageView) mContentView.getChildAt((mContentView.getChildCount()-1));
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
-                Bitmap  bitmap =thumbnailUtils.extractThumbnail(bi,250,250);
-                thumbnailName = saveBitmap.createThumbnailFileName(dataObject.toString());
+                int width = bi.getWidth()/4;
+                int height = bi.getHeight()/4;
+                Bitmap  bitmap =thumbnailUtils.extractThumbnail(bi,width,height);
+                thumbnailName = SaveBitmap.createThumbnailFileName(dataObject.toString());
 
 
                 //save thumbnail file
-                saveBitmap = new saveBitmap(thumbnailName,bitmap,getApplicationContext());
-                saveBitmap.save();
+                SaveBitmap = new SaveBitmap(thumbnailName,bitmap,getApplicationContext());
+                SaveBitmap.save();
 
                 //setup FireBase DB
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -119,12 +121,13 @@ public class MainPictureDisplay extends Activity {
             public void onItemClicked(int itemPosition, Object dataObject) {
                 Intent intent = new Intent(getApplicationContext(),ImageViewFullscreen.class);
                 intent.putExtra("imageToView", ""+dataObject);
-                String filename =  saveBitmap.createFilename((String) dataObject);
+                String filename =  SaveBitmap.createFilename((String) dataObject);
                 intent.putExtra("fileName",filename);
                 ImageView tempView = (ImageView) mContentView.getSelectedView();
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
-                saveBitmap = new saveBitmap(filename,bi,getApplicationContext());
-                saveBitmap.save();
+                SaveBitmap = new SaveBitmap(filename,bi,getApplicationContext());
+                SaveBitmap.save();
+                intent.putExtra("firstView",true);
 
                 startActivity(intent);
 
@@ -153,7 +156,7 @@ public class MainPictureDisplay extends Activity {
         String tempURL;
         for (int i = 0; i < 10 ; i++) {
             int fatPitaImage =  rand.nextInt(Total_FATPITA_Images)+1;
-            tempURL = imageURLFatPita+"("+fatPitaImage+").jpg";
+            tempURL = imageURLFatPita+fatPitaImage+").jpg";
             temp.add(tempURL);
         }
         return temp;

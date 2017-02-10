@@ -83,8 +83,9 @@ public class HistoryStaggeredGridFragment extends Fragment {
             @Override
             public void onItemClick(String url) {
                 String thumbnailFilename = (String) url;
+                String picUrl = RandoPicture.setFatPitaURL_FromThumbnailName(thumbnailFilename);
                 Intent intent = new Intent(getActivity().getApplicationContext(),ImageViewFullscreen.class);
-                intent.putExtra("imageToView", thumbnailFilename);
+                intent.putExtra("imageToView", picUrl);
                 intent.putExtra("fileName",thumbnailFilename);
                 startActivity(intent);
             }

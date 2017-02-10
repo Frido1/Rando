@@ -20,6 +20,7 @@
     <string name="home_ViewSentPics">View Sent Pics</string>
     <string name="home_History">History</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="send_to">Send To</string>
 
     <!-- Strings related to Settings -->
 
@@ -99,4 +100,5 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_image_view_fullscreen">ImageViewFullscreen</string>
+    <string name="share">SHARE</string>
 </resources>

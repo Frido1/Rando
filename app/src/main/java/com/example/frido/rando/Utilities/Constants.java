@@ -5,5 +5,5 @@ package com.example.frido.rando.Utilities;
  */
 
 public class Constants {
-
+    public static String IMAGEURLFATPITA = "http://fatpita.net/images/image%20(";
 }
