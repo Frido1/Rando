@@ -12,14 +12,14 @@ import java.io.IOException;
  * Created by fjmar on 11/19/2016.
  */
 
-public class saveBitmap {
+public class SaveBitmap {
     private String filename;
     private Bitmap bitmap;
     private  Context context;
     private final int MODE_PRIVATE =0;
-    public saveBitmap() {
+    public SaveBitmap() {
     }
-    public saveBitmap(String filename, Bitmap bitmap, Context context){
+    public SaveBitmap(String filename, Bitmap bitmap, Context context){
         this.filename = filename;
         this.bitmap = bitmap;
         this.context = context;
@@ -62,6 +62,13 @@ public class saveBitmap {
         temp = temp.substring(start);
         temp = temp.replace("(","");
         temp = temp.replace(")","");
+        return  temp;
+    }
+    public static String extractThumbnailNumber(String temp){
+        int start = temp.lastIndexOf("_");
+        start++;
+        int end = temp.lastIndexOf(".");
+        temp = temp.substring(start,end);
         return  temp;
     }
     /**

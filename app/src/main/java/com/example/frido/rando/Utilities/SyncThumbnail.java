@@ -36,12 +36,13 @@ public class SyncThumbnail {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Looper.prepare();
+                //Looper.prepare();
                 try {
                     theBitmap = Glide.
                             with(context).
                             load(url).
                             asBitmap().
+                            transform(new CroppingTransformation(context)).
                             into(-1,-1).
                             get();
                 } catch (final ExecutionException e) {

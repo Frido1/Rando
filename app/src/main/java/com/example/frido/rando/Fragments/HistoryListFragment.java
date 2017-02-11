@@ -5,21 +5,29 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.frido.rando.ImageViewFullscreen;
 import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.CustomListAdapter;
+import com.example.frido.rando.Utilities.SaveBitmap;
 import com.example.frido.rando.Utilities.SyncThumbnail;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +35,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
@@ -47,12 +56,14 @@ public class HistoryListFragment extends Fragment  {
     ListView listView;
     private Unbinder unbinder;
     private CustomListAdapter customListAdapter;
-
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        this.context = getActivity().getApplicationContext();
+
 
 
     }
@@ -62,13 +73,97 @@ public class HistoryListFragment extends Fragment  {
         View view =  inflater.inflate(R.layout.fragment_history,container,false);
         listUrls = getURLSFromFirebase();
         unbinder = ButterKnife.bind(this,view );
-        customListAdapter = new CustomListAdapter(getActivity().getApplicationContext(),listUrls);
-        checkThumbnailPaths(listUrls,getActivity().getApplicationContext());
+        customListAdapter = new CustomListAdapter(context,listUrls);
+
         listView.setAdapter(customListAdapter);
         AdapterView.OnItemClickListener onItemClickListener = getListener(customListAdapter);
         listView.setOnItemClickListener(onItemClickListener);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        AbsListView.MultiChoiceModeListener multiChoiceModeListener = getMultiListener();
+        listView.setMultiChoiceModeListener(multiChoiceModeListener);
         return view;
 
+    }
+
+    private AbsListView.MultiChoiceModeListener getMultiListener() {
+        AbsListView.MultiChoiceModeListener multiChoiceModeListener = new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+            mode.setTitle(listView.getCheckedItemCount() +" selected");
+                CardView cardView = (CardView) listView.getChildAt(position);
+                if (cardView !=null) {
+                    cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.green));
+                }
+
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.delete_contextual_menu,menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete:
+                        Log.d("menu", "delete action");
+                        delete();
+                        mode.finish();
+                        return true;
+                }
+                return false;
+            }
+
+            private void delete() {
+                SparseBooleanArray checked = listView.getCheckedItemPositions();
+                for (int i = 0; i < checked.size(); i++) {
+                    if (checked.valueAt(i) == true){
+                        //this url is just thumb_xxxx.jpg
+                        final String url = (String) listView.getItemAtPosition(checked.keyAt(i));
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        final DatabaseReference reference = database.getReference();
+                        final String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        Query findData = reference.child("users").child(userID);
+                        findData.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Iterable<DataSnapshot> dataSnapshotIterator = dataSnapshot.getChildren();
+                                Iterator<DataSnapshot> iterator = dataSnapshotIterator.iterator();
+                                while (iterator.hasNext()) {
+                                    DataSnapshot dataSnapshot1= (DataSnapshot) iterator.next();
+                                    RandoPicture randoPicture = (RandoPicture) dataSnapshot1.getValue(RandoPicture.class);
+                                    if (randoPicture.getThumbnail_ID().equals(url)){
+                                        String key = dataSnapshot1.getKey();
+                                        reference.child("users").child(userID).child(key).removeValue();
+                                        customListAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("database", databaseError.getDetails());
+
+                            }
+                        });
+
+                        Log.d("menu", "deleting: "+url);
+                    }
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+        };
+                return  multiChoiceModeListener;
     }
 
     private void checkThumbnailPaths(ArrayList<String> listUrls, Context applicationContext) {
@@ -76,7 +171,8 @@ public class HistoryListFragment extends Fragment  {
                     listUrls) {
                 File filePath = applicationContext.getFileStreamPath(url);
                 if (!filePath.exists()){
-                    SyncThumbnail syncThumbnail = new SyncThumbnail(url,filePath,applicationContext);
+                    String urlFinal = RandoPicture.setFatPitaURL_FromThumbnailName(url);
+                    SyncThumbnail syncThumbnail = new SyncThumbnail(urlFinal,filePath,applicationContext);
                     syncThumbnail.getAndSaveThumbnail();
                 }
             }
@@ -117,6 +213,7 @@ public class HistoryListFragment extends Fragment  {
                    RandoPicture randoPicture =iterator.next().getValue(RandoPicture.class);
                    urls.add(randoPicture.getThumbnail_ID());
                }
+                checkThumbnailPaths(listUrls,getActivity().getApplicationContext());
                 customListAdapter.notifyDataSetChanged();
             }
 

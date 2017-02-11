@@ -14,6 +14,7 @@ public class RandoPicture  {
     private String  url;
     private String thumbnail_ID;
 
+
     public RandoPicture(String url, String thumbnail_ID) {
         this.url = url;
         this.thumbnail_ID = thumbnail_ID;
