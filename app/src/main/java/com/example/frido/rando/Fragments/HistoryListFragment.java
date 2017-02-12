@@ -167,15 +167,45 @@ public class HistoryListFragment extends Fragment  {
     }
 
     private void checkThumbnailPaths(ArrayList<String> listUrls, Context applicationContext) {
+
+        File file = context.getFilesDir();
+        ArrayList<String> filesToBeDeleted = new ArrayList<>();
+         String [] listOfFilesOnDevice=file.list();
+        for (String stringFile :
+                listOfFilesOnDevice) {
+            int end = stringFile.length()-3;
+            String temp = stringFile.substring(end);
+            if (temp.equals("jpg")){
+                //String temp2 = "thumb_"+stringFile;
+                filesToBeDeleted.add(stringFile);
+            }
+        }
+
+
+
             for (String url :
                     listUrls) {
                 File filePath = applicationContext.getFileStreamPath(url);
+                //check to see if anything was added on another device
                 if (!filePath.exists()){
                     String urlFinal = RandoPicture.setFatPitaURL_FromThumbnailName(url);
                     SyncThumbnail syncThumbnail = new SyncThumbnail(urlFinal,filePath,applicationContext);
                     syncThumbnail.getAndSaveThumbnail();
                 }
+                //check to see if it was deleted on another device
+                if (filesToBeDeleted.contains(url)){
+                    int location = filesToBeDeleted.indexOf(url);
+                    filesToBeDeleted.remove(location);
+                }
             }
+        //check to see if any filse are to be deleted
+        if (!filesToBeDeleted.isEmpty()){
+            for (String fileName :
+                    filesToBeDeleted) {
+                File filePath = context.getFileStreamPath(fileName);
+                filePath.delete();
+            }
+        }
 
     }
 
