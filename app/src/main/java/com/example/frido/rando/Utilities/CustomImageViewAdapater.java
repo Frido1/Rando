@@ -1,14 +1,20 @@
 package com.example.frido.rando.Utilities;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.frido.rando.R;
 import com.example.frido.rando.Utilities.CroppingTransformation;
 
@@ -24,11 +30,13 @@ public class CustomImageViewAdapater extends BaseAdapter {
     private ArrayList<String> imageUrls;
     private ImageView imageViewTouch;
     private   ViewHolder holder;
+    private ProgressBar progressBar;
 
     public CustomImageViewAdapater(Context context, ArrayList<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;
         this.inflater = LayoutInflater.from(context);
+
     }
 
     @Override
@@ -37,20 +45,21 @@ public class CustomImageViewAdapater extends BaseAdapter {
             convertView = inflater.inflate(R.layout.pictures, parent, false);
         }
 
+
         imageViewTouch = (ImageView) convertView.findViewById(R.id.fullscreen_content);
 
         //store the view to access in other classes
         holder = new ViewHolder();
         holder.imageUrl = imageUrls.get(position);
         holder.imageview = imageViewTouch;
+        holder.progressBar = progressBar;
 
 
 
         Glide.with(context)
                 .load(imageUrls.get(position))
                 .asBitmap()
-                .placeholder(R.mipmap.ic_launcher)
-                .thumbnail(0.1f)
+                .placeholder(getProgessBarIndeterminate())
                 .transform(new CroppingTransformation(context))
                 .into(imageViewTouch);
 
@@ -61,6 +70,18 @@ public class CustomImageViewAdapater extends BaseAdapter {
         convertView.setTag(holder);
         return convertView;
     }
+
+    Drawable getProgessBarIndeterminate() {
+        final int[] attrs = {android.R.attr.indeterminateDrawable};
+        final int attrs_indeterminateDrawable_index = 0;
+        TypedArray a = context.obtainStyledAttributes(android.R.style.Widget_ProgressBar, attrs);
+        try {
+            return a.getDrawable(attrs_indeterminateDrawable_index);
+        } finally {
+            a.recycle();
+        }
+    }
+
 
     @Override
     public int getCount() {
@@ -84,6 +105,7 @@ public class CustomImageViewAdapater extends BaseAdapter {
     static  class  ViewHolder{
         ImageView imageview;
         String imageUrl;
+        ProgressBar progressBar;
     }
 
 }

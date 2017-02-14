@@ -22,22 +22,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:id="@+id/home_ViewSentPics"
-        android:text="@string/home_ViewSentPics"
-        android:layout_below="@+id/home_Button_Start"
-        android:layout_centerHorizontal="true"
-        android:onClick="testSlider" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:id="@+id/home_PersonalHistory"
-        android:layout_below="@+id/home_ViewSentPics"
-        android:layout_alignStart="@+id/home_Button_Start"
         android:text="@string/home_History"
-        android:onClick="startHistoryActivity" />
+        android:onClick="startHistoryActivity"
+        android:layout_below="@+id/home_Button_Start"
+        android:layout_alignStart="@+id/home_Button_Start"
+        android:layout_marginTop="47dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -45,7 +35,7 @@
         android:id="@+id/home_Button_Start"
         android:text="@string/home_Button_Start"
         android:onClick="startMainPictureDisplayActivity"
+        android:layout_marginTop="65dp"
         android:layout_below="@+id/home_WelcomeRando"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="79dp" />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

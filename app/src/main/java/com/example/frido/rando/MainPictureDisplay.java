@@ -11,12 +11,16 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.frido.rando.Objects.RandoPicture;
 import com.example.frido.rando.Utilities.Constants;
 import com.example.frido.rando.Utilities.CustomImageViewAdapater;
 import com.example.frido.rando.Utilities.SaveBitmap;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,6 +42,10 @@ public class MainPictureDisplay extends Activity {
     private SaveBitmap SaveBitmap;
     private String thumbnailName;
     private SwipeCardView mContentView;
+    private int swipeCount = 0;
+    private InterstitialAd mInterstitialAd;
+    private ProgressBar progressBar;
+
 
 
     @Override
@@ -48,12 +56,8 @@ public class MainPictureDisplay extends Activity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
         mContentView = (SwipeCardView) findViewById(R.id.flingContainerFrame);
-
-
         final ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
-
         //load image into main content view
         imagesToLoad = getImageURLS();
         final CustomImageViewAdapater adapater = new CustomImageViewAdapater(getApplicationContext(),imagesToLoad);
@@ -61,12 +65,12 @@ public class MainPictureDisplay extends Activity {
         mContentView.setFlingListener(new SwipeCardView.OnCardFlingListener() {
             @Override
             public void onCardExitLeft(Object dataObject) {
-                makeToast(getApplicationContext(),"Left");
+                showAd();
             }
 
             @Override
             public void onCardExitRight(Object dataObject) {
-                makeToast(getApplicationContext(),"Right");
+                makeToast(getApplicationContext(),"Liked");
                 ImageView tempView = (ImageView) mContentView.getChildAt((mContentView.getChildCount()-1));
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
                 int width = bi.getWidth()/4;
@@ -88,12 +92,14 @@ public class MainPictureDisplay extends Activity {
 
 
 
-
+                showAd();
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                imagesToLoad .add(getOneMoreImage());
+                for (int i = 0; i < 5; i++) {
+                    imagesToLoad .add(getOneMoreImage());
+                }
                 adapater.notifyDataSetChanged();
             }
 
@@ -104,14 +110,12 @@ public class MainPictureDisplay extends Activity {
 
             @Override
             public void onCardExitTop(Object dataObject) {
-                makeToast(getApplicationContext(),"Top");
-
+                showAd();
             }
 
             @Override
             public void onCardExitBottom(Object dataObject) {
-                makeToast(getApplicationContext(),"Bottom");
-
+                showAd();
             }
         });
 
@@ -134,8 +138,40 @@ public class MainPictureDisplay extends Activity {
             }
         });
 
+        mInterstitialAd = new InterstitialAd(this);
+        // TODO: 2/13/2017 remove before launch
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        //test id remove before launch
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        requestNewInterstitial();
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                requestNewInterstitial();
+            }
+        });
 
 
+
+    }
+
+    private void showAd() {
+        swipeCount= ++swipeCount;
+        if (swipeCount/10 > 0  && mInterstitialAd.isLoaded()){
+            mInterstitialAd.show();
+            swipeCount = 0;
+        }
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
     private void makeToast(Context ctx, String s) {
@@ -146,7 +182,7 @@ public class MainPictureDisplay extends Activity {
         Random rand = new Random();
         String placeHolder = imageURLFatPita;
         int fatPitaImage =  rand.nextInt(Total_FATPITA_Images)+1;
-        placeHolder = placeHolder+"("+fatPitaImage+").jpg";
+        placeHolder = placeHolder+fatPitaImage+").jpg";
         return placeHolder ;
     }
 

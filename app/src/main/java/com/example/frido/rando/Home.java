@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -69,7 +70,7 @@ public class Home extends Activity {
 
             }
         };
-
+        MobileAds.initialize(this,"ca-app-pub-4726911449276237~6609498906");
 
     }
 

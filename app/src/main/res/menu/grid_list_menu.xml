@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item android:title="Linear"
-        android:id="@+id/linearLayout"
+        android:id="@+id/list_menu_action"
         android:showAsAction="always"
         android:icon="@drawable/list_action_bar"/>
     <item android:title="VoronoiSwitch"

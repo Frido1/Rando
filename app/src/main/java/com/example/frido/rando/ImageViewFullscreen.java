@@ -153,7 +153,6 @@ public class ImageViewFullscreen extends AppCompatActivity {
             Glide.with(context)
                     .load(picUrl)
                     .asBitmap()
-                    .placeholder(R.mipmap.ic_launcher)
                     .transform(new CroppingTransformation(context))
                     .into(loadReady);
         }

@@ -138,7 +138,7 @@ public class HistoryStaggeredGridFragment extends Fragment {
             case R.id.voronoiSwitch:
                 switchVoronoFragment();
                 break;
-            case R.id.listSwitch:
+            case R.id.list_menu_action:
                 switchGridoFragments();
                 break;
             default: break;
