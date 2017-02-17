@@ -99,7 +99,7 @@ public class Home extends Activity {
     }
     public void logout(View view){
         // Google sign out
- /*       final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
         mGoogleApiClient.connect();
         mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -127,7 +127,7 @@ public class Home extends Activity {
             public void onConnectionSuspended(int i) {
                 Log.d(TAG, "connedctionSusspended");
             }
-        });*/
+        });
         mAuth.signOut();
 
     }

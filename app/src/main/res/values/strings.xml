@@ -106,4 +106,6 @@
     <string name="or">Or Sign in with Google</string>
     <string name="login_google">Login Google</string>
     <string name="create">Create/Sign In</string>
+    <string name="liked">Picture Saved In Gallery</string>
+    <string name="nope">Nope</string>
 </resources>

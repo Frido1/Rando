@@ -1,6 +1,7 @@
 package com.example.frido.rando.Utilities;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,8 @@ public class CustomListAdapter extends BaseAdapter {
         String URL = imageURLs.get(position);
         filePath = context.getFileStreamPath(URL);
         if(filePath.exists()) {
-            Glide.with(context).load(filePath).asBitmap().into(holder.thumbnail);
+            Glide.with(context).load(filePath).into(holder.thumbnail);
+
         }else{
 
         }

@@ -40,6 +40,8 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
     private  FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
+    private String emailFinal;
+    private String passwordFinal;
 
     private static final String TAG = "AnonymousAuth";
     // Request code used to invoke sign in user interactions.
@@ -172,13 +174,13 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
            // showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+   /*         opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
                     hideProgressDialog();
                     handleSignInResult(googleSignInResult);
                 }
-            });
+            });*/
         }
 
 
@@ -238,8 +240,9 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
     }
     public void signInWithFirebase(View view){
         Editable emailString = email.getText();
-        String emailFinal = emailString.toString();
-        String passwordFinal = password.toString();
+        emailFinal = emailString.toString();
+         Editable passwordString = password.getText();
+        passwordFinal = passwordString.toString();
         // TODO: 2/16/2017 validate better
         mAuth.createUserWithEmailAndPassword(emailFinal,passwordFinal)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -251,12 +254,32 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
                 // the auth state listener will be notified and logic to handle the
                 // signed in user can be handled in the listener.
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "failed firebase sign in",
-                            Toast.LENGTH_SHORT).show();
+                    //check to see if account exists
+                    checkToSeeIfFirebaseAccountExists();
+
                 }
             }
         });
 
     }
 
+    private void checkToSeeIfFirebaseAccountExists() {
+        mAuth.signInWithEmailAndPassword(emailFinal, passwordFinal)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+
+                        }
+
+                        // ...
+                    }
+                });
+    }
 }

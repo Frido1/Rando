@@ -47,7 +47,7 @@ public class MainPictureDisplay extends Activity {
     private InterstitialAd mInterstitialAd;
     private ProgressBar progressBar;
 
-
+// TODO: 2/16/2017 need to create if image is loaded global method 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +66,14 @@ public class MainPictureDisplay extends Activity {
         mContentView.setFlingListener(new SwipeCardView.OnCardFlingListener() {
             @Override
             public void onCardExitLeft(Object dataObject) {
+                makeToast(getApplicationContext(),getResources().getString(R.string.nope));
                 showAd();
             }
 
             @Override
             public void onCardExitRight(Object dataObject) {
-                makeToast(getApplicationContext(),"Liked");
-                RelativeLayout tempViewLayout = (RelativeLayout) mContentView.getSelectedView();
-                ImageView tempView = (ImageView) tempViewLayout.getChildAt((mContentView.getChildCount()-1));
+                RelativeLayout relativeLayout = (RelativeLayout) mContentView.getChildAt(mContentView.getChildCount()-1);
+                ImageView tempView = (ImageView)  relativeLayout.getChildAt(0);
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
                 int width = bi.getWidth()/4;
                 int height = bi.getHeight()/4;
@@ -95,6 +95,7 @@ public class MainPictureDisplay extends Activity {
 
 
                 showAd();
+                makeToast(getApplicationContext(),getResources().getString(R.string.liked));
             }
 
             @Override
@@ -112,11 +113,14 @@ public class MainPictureDisplay extends Activity {
 
             @Override
             public void onCardExitTop(Object dataObject) {
+                makeToast(getApplicationContext(),getResources().getString(R.string.nope));
                 showAd();
             }
 
             @Override
             public void onCardExitBottom(Object dataObject) {
+
+                makeToast(getApplicationContext(),getResources().getString(R.string.nope));
                 showAd();
             }
         });
@@ -131,12 +135,16 @@ public class MainPictureDisplay extends Activity {
                 intent.putExtra("fileName",filename);
                 RelativeLayout tempViewLayout = (RelativeLayout) mContentView.getSelectedView();
                 ImageView tempView = (ImageView) tempViewLayout.getChildAt(itemPosition);
-                Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
-                SaveBitmap = new SaveBitmap(filename,bi,getApplicationContext());
-                SaveBitmap.save();
-                intent.putExtra("firstView",true);
+                try {
+                    Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
+                    SaveBitmap = new SaveBitmap(filename,bi,getApplicationContext());
+                    SaveBitmap.save();
+                    intent.putExtra("firstView",true);
 
-                startActivity(intent);
+                    startActivity(intent);
+                } catch (Exception e) {
+                   return;
+                }
 
             }
         });

@@ -245,6 +245,7 @@ public class HistoryListFragment extends Fragment  {
                }
                 checkThumbnailPaths(listUrls,getActivity().getApplicationContext());
                 customListAdapter.notifyDataSetChanged();
+
             }
 
             @Override
