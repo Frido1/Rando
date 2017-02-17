@@ -102,4 +102,8 @@
 
     <string name="title_activity_image_view_fullscreen">ImageViewFullscreen</string>
     <string name="share">SHARE</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="or">Or Sign in with Google</string>
+    <string name="login_google">Login Google</string>
+    <string name="create">Create/Sign In</string>
 </resources>

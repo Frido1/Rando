@@ -35,12 +35,11 @@ public class Home extends Activity {
     TextView welcomeTitle;
     @BindView(R.id.home_Button_Start)
     Button homeButtonStart;
-    @BindView(R.id.home_ViewSentPics)
-    Button viewSentPics;
     @BindView(R.id.home_PersonalHistory)
     Button personalHistory;
     @BindView(R.id.activity_home)
     RelativeLayout testLayout;
+    @BindView(R.id.logoutButton) Button logoutButton;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String TAG = "Home";
@@ -89,20 +88,18 @@ public class Home extends Activity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        MenuInflater layoutInflater = getMenuInflater();
-        layoutInflater.inflate(R.menu.actionmenu,menu);
-        return true;
+
+    public void startMainPictureDisplayActivity(View view){
+        Intent intent = new Intent(getApplicationContext(),MainPictureDisplay.class);
+        startActivity(intent);
     }
-
-    public void menuLogOut(MenuItem mi) {
-        Log.d("test", "menu fire");
-
-
+    public void startHistoryActivity(View view){
+        Intent intent = new Intent(getApplicationContext(),History.class);
+        startActivity(intent);
+    }
+    public void logout(View view){
         // Google sign out
-        final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+ /*       final GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API).build();
         mGoogleApiClient.connect();
         mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -130,17 +127,9 @@ public class Home extends Activity {
             public void onConnectionSuspended(int i) {
                 Log.d(TAG, "connedctionSusspended");
             }
-        });
+        });*/
         mAuth.signOut();
-    }
 
-    public void startMainPictureDisplayActivity(View view){
-        Intent intent = new Intent(getApplicationContext(),MainPictureDisplay.class);
-        startActivity(intent);
-    }
-    public void startHistoryActivity(View view){
-        Intent intent = new Intent(getApplicationContext(),History.class);
-        startActivity(intent);
     }
 
 }

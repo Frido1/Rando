@@ -12,6 +12,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.frido.rando.Objects.RandoPicture;
@@ -71,7 +72,8 @@ public class MainPictureDisplay extends Activity {
             @Override
             public void onCardExitRight(Object dataObject) {
                 makeToast(getApplicationContext(),"Liked");
-                ImageView tempView = (ImageView) mContentView.getChildAt((mContentView.getChildCount()-1));
+                RelativeLayout tempViewLayout = (RelativeLayout) mContentView.getSelectedView();
+                ImageView tempView = (ImageView) tempViewLayout.getChildAt((mContentView.getChildCount()-1));
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
                 int width = bi.getWidth()/4;
                 int height = bi.getHeight()/4;
@@ -127,7 +129,8 @@ public class MainPictureDisplay extends Activity {
                 intent.putExtra("imageToView", ""+dataObject);
                 String filename =  SaveBitmap.createFilename((String) dataObject);
                 intent.putExtra("fileName",filename);
-                ImageView tempView = (ImageView) mContentView.getSelectedView();
+                RelativeLayout tempViewLayout = (RelativeLayout) mContentView.getSelectedView();
+                ImageView tempView = (ImageView) tempViewLayout.getChildAt(itemPosition);
                 Bitmap bi = ((BitmapDrawable) tempView.getDrawable()).getBitmap();
                 SaveBitmap = new SaveBitmap(filename,bi,getApplicationContext());
                 SaveBitmap.save();

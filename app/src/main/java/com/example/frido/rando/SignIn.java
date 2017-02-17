@@ -5,8 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -26,6 +31,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SignIn extends Activity implements GoogleApiClient.OnConnectionFailedListener {
 
     private FirebaseAuth mAuth;
@@ -36,6 +44,13 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
     private static final String TAG = "AnonymousAuth";
     // Request code used to invoke sign in user interactions.
     private static final int RC_SIGN_IN = 9001;
+
+    @BindView(R.id.email)
+    EditText email;
+    @BindView(R.id.password)
+    EditText password;
+    @BindView(R.id.signIn_Firebase) Button signInWithFirebaseButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +115,7 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
             }
         });
 
-
+    ButterKnife.bind(this);
     }
 
 
@@ -156,7 +171,7 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            showProgressDialog();
+           // showProgressDialog();
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(GoogleSignInResult googleSignInResult) {
@@ -220,6 +235,28 @@ public class SignIn extends Activity implements GoogleApiClient.OnConnectionFail
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
+    }
+    public void signInWithFirebase(View view){
+        Editable emailString = email.getText();
+        String emailFinal = emailString.toString();
+        String passwordFinal = password.toString();
+        // TODO: 2/16/2017 validate better
+        mAuth.createUserWithEmailAndPassword(emailFinal,passwordFinal)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                // If sign in fails, display a message to the user. If sign in succeeds
+                // the auth state listener will be notified and logic to handle the
+                // signed in user can be handled in the listener.
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "failed firebase sign in",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
 }

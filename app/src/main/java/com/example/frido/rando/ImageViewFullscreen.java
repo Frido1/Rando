@@ -145,7 +145,6 @@ public class ImageViewFullscreen extends AppCompatActivity {
             Glide.with(context.getApplicationContext())
                     .load(filePath)
                     .asBitmap()
-                    .transform(new CroppingTransformation(getApplicationContext()))
                     .into(loadReady);
         }else{
            //will load high res image from web.  
